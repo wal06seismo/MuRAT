@@ -499,10 +499,7 @@ if evst==1
     
     indexray=0; % Increases every time a ray is created.
     
-    %Sets figure for rays - it will show rays in the reference system of
-    %the pre-defined grid. If the Mapping Toolbox is available and the
-    %coordinates are in latitude and longitude, the figure will show coast
-    %lines
+    %Sets figure for rays
     rays=figure('Name','Rays','NumberTitle','off','visible',visib);
     
     if pa==3
@@ -779,6 +776,7 @@ disp('Data Section')
 load Murat.mat
 
 pa=Murat.analysis;
+hasMT=Murat.figures.hasMT;
 
 %PATHS and FIGURES
 FPath=Murat.paths.workingdir;
@@ -786,7 +784,6 @@ FLabel=Murat.paths.label;
 visib=Murat.figures.visibility;
 sz=Murat.figures.sizeMarker;
 fformat=Murat.figures.format;
-hasMT=Murat.figures.hasMT;
 
 %DATA
 evst=Murat.geometry.import;
@@ -821,12 +818,14 @@ degorutm=Murat.geometry.degreesorutm;
 
 
 % INVERSION
-nW=Murat.inversion.fitL;
-ntW=Murat.inversion.fitN;
-RZZ2=Murat.inversion.fitT;
-m1a=Murat.inversion.fit;
 nonlinear=Murat.inversion.nonlinear;
-L1=Murat.inversion.total;
+if nonlinear==1
+    nW=Murat.inversion.fitL;
+    ntW=Murat.inversion.fitN;
+    m1a=Murat.inversion.fit;
+    L1=Murat.inversion.total;
+end
+RZZ2=Murat.inversion.fitT;
         
 if pa==3
     fin1=Murat.data.bodyWindow;
@@ -876,7 +875,6 @@ RZZ = zeros(lls,1); %Correlation coefficient with respect to linear
 ttheory=zeros(lls,1);
 peakd=zeros(lls,1);
 constQmean=zeros(2,2);
-tlapse=(tCm+nW/2:nW:tCm+tWm-nW/2)';
 
 index=0;
 indexlonger=0;
@@ -923,7 +921,7 @@ for i=1:lls
     
     %Read seismogram and get peaking/event/station info
     [tempis,sisma,SAChdr] = fget_sac(listasac{i}); % Converts SAC files
-    
+    sisma=detrend(sisma,1);
     tempi(i,2)=eval(fP);
     if tempi(i,2)==-12345
         continue
@@ -1054,7 +1052,7 @@ for i=1:lls
             if evst==1
                 ttheory(i,1)=D(i)/vth;
             elseif evst==2
-                ttheory(i,1)=D(i)*degorutm/vth;
+                ttheory(i,1)=D(i)/degorutm/vth;
             end
             tempi(i,1)=pktime-ttheory(i,1);
         else
@@ -1117,10 +1115,11 @@ for i=1:lls
             RZZ(i,1)=abs(Rz(1,2));
         end    
     
-    elseif nonlinear==1
-
     %THIS IS THE SYSTEM OF EQUATIONS FOR THE NON-LINEAR SOLUTION - USING
     %THE LINEAR INVERSE QC AS STARTING MODEL
+    elseif nonlinear==1
+
+        tlapse=(tCm+nW/2:nW:tCm+tWm-nW/2)';
         d_obs=zeros(ntW,1);
         ntm=0;
         for k=1:ntW
@@ -1328,7 +1327,7 @@ if evst==2
         
         Qcsen=figure('Name','Qc sensitivity, first source-station pair',...
             'NumberTitle','off','visible',visib);
-        Qcss=Ac(30,:);
+        Qcss=Ac(1,:);
         Qcs=zeros(nxc,nyc);
 
         index=0;
@@ -1368,87 +1367,106 @@ ll=lls;
 
 %Matrix A
 if evst==2 && compon>1
-    lA=length(A(:,1));
-    Ac=Ac(1:compon:lA-compon,:);
-    Apd=Apd(1:compon:lA-compon,:);
+    lA=length(Ac(:,1));
+    Ac=Ac(1:compon:lA,:);
+    Apd=Apd(1:compon:lA,:);
+    lu=D(1:2:lA)*degorutm;
     if pa==3
         A=A(1:compon:lA-compon,:);
+        Murat.inversion.AQ=A;
     end
     Murat.inversion.APeakDelay=Apd;
-    Murat.inversion.AQCoda=Ac;
-    Murat.inversion.AQ=A;
+    Murat.inversion.AQCoda=Ac; 
 end
 
 % 2 components (tipically the two horizontals)
-if compon ==  2
+if compon==1
+    lu=D*degorutm;
+elseif compon ==  2
     lsig = ll/2;
-    signal1 = zeros(lsig,1); % The average direct wave energies
-    coda1 = zeros(lsig,1); % The average coda wave energies
-    rapsp1 = zeros(lsig,1); % The average spectral ratios
-    rapspcn1 = zeros(lsig,1); % The average coda versus noise ratios
+    if pa>2
+        signal1 = zeros(lsig,1); % The average direct wave energies
+        coda1 = zeros(lsig,1); % The average coda wave energies
+        rapsp1 = zeros(lsig,1); % The average spectral ratios
+        rapspcn1 = zeros(lsig,1); % The average coda versus noise ratios
+    end
     Qm1 = zeros(lsig,1); % The average coda versus noise ratios
     RZZ1 = zeros(lsig,1); % The average coda versus noise ratios
     peakd1 = zeros(lsig,1); % The average coda versus noise ratios
+    lu = zeros(lsig,1); % The new luntot
     for i = 1:2:(ll-1)
         icomp = icomp+1;
-        signal1(icomp,1) = (signal(i,1)+signal(i+1))/2;
-        coda1(icomp,1) = (coda(i)+coda(i+1))/2;
-        rapsp1(icomp,1) = (rapsp(i)+rapsp(i+1))/2;
-        rapspcn1(icomp,1) = (rapspcn(i)+rapspcn(i+1))/2;
-        Qm1=(Qm(i,1)+Qm(i+1))/2;
-        RZZ1=(Rzz(i,1)+Rzz(i+1))/2;
-        peakd1=(peakd(i,1)+lpeakd(i+1))/2;
+        if pa>2
+            signal1(icomp,1) = (signal(i,1)+signal(i+1))/2;
+            coda1(icomp,1) = (coda(i)+coda(i+1))/2;
+            rapsp1(icomp,1) = (rapsp(i)+rapsp(i+1))/2;
+            rapspcn1(icomp,1) = (rapspcn(i)+rapspcn(i+1))/2;
+            lu(icomp,1)=luntot(i);
+        end
+        Qm1(icomp,1)=(Qm(i,1)+Qm(i+1))/2;
+        RZZ1(icomp,1)=(RZZ(i,1)+RZZ(i+1))/2;
+        peakd1(icomp,1)=(peakd(i,1)+peakd(i+1))/2;
+        lu(icomp,1)=D(i)*degorutm;
     end    
-    signal=signal1;
-    coda=coda1;
-    rapsp=rapsp1;
-    rapspcn=rapspcn1;
+    if pa>2
+        signal=signal1;
+        coda=coda1;
+        rapsp=rapsp1;
+        rapspcn=rapspcn1;
+    end
     Qm=Qm1;
     RZZ=RZZ1;
     peakd=peakd1;
     
+    
 % 3 components (WE, SN, Z)
 elseif compon == 3
     lsig = ll/3;
-    signal1 = zeros(lsig,1); % The average direct wave energies
-    coda1 = zeros(lsig,1); % The average coda wave energies
-    rapsp1 = zeros(lsig,1); % The average spectral ratios
-    rapspcn1 = zeros(lsig,1); % The average coda versus noise ratios
+    if pa>2
+        signal1 = zeros(lsig,1); % The average direct wave energies
+        coda1 = zeros(lsig,1); % The average coda wave energies
+        rapsp1 = zeros(lsig,1); % The average spectral ratios
+        rapspcn1 = zeros(lsig,1); % The average coda versus noise ratios
+    end
     Qm1 = zeros(lsig,1); % 
     RZZ1 = zeros(lsig,1); % 
     peakd1 = zeros(lsig,1); %
-    
+    lu = zeros(lsig,1); % The new luntot
     for i = 1:3:(ll-2)
         icomp = icomp+1;
-        signal1(icomp,1) = ((signal(i)+signal(i+1))/2 + signal(i+2))/2;
-        coda1(icomp,1) = ((coda(i)+coda(i+1))/2 + coda(i+2))/2;
-        rapsp1(icomp,1) = ((rapsp(i)+rapsp(i+1))/2 + rapsp(i+2))/2;
-        rapspcn1(icomp,1) = ((rapspcn(i)+rapspcn(i+1))/2 + rapspcn(i+2))/2;
+        if pa>2
+            signal1(icomp,1) = (signal(i,1)+signal(i+1))/2;
+            coda1(icomp,1) = (coda(i)+coda(i+1))/2;
+            rapsp1(icomp,1) = (rapsp(i)+rapsp(i+1))/2;
+            rapspcn1(icomp,1) = (rapspcn(i)+rapspcn(i+1))/2;
+            lu(icomp,1)=luntot(i);
+        end
         Qm1(icomp,1) = ((Qm1(i)+Qm1(i+1))/2 + Qm1(i+2))/2;
         RZZ1(icomp,1) = ((RZZ1(i)+RZZ1(i+1))/2 + RZZ1(i+2))/2;
         peakd1(icomp,1) = ((peakd(i)+peakd(i+1))/2 + peakd(i+2))/2;
+        lu(icomp,1)=D(i)*degorutm;
     end
-    signal=signal1;
-    coda=coda1;
-    rapsp=rapsp1;
-    rapspcn=rapspcn1;
+    if pa>2
+        signal=signal1;
+        coda=coda1;
+        rapsp=rapsp1;
+        rapspcn=rapspcn1;
+    end
     Qm=Qm1;
     RZZ=RZZ1;
     peakd=peakd1;
 end
 
 if pa<3
-    lu=D;
     if evst==1
         time0=D/vth;
     elseif evst==2
-        time0=D*degorutm/vth;
+        time0=lu/vth;
     end
     
 elseif pa==3
     %Calculate average geometrical spreading factor and Q
     %sets the constant in the CN method
-    lu=luntot;
     
     constCNQc=(tCm+tWm/2)^sped.*exp(Qm*2*pi*cf*(tCm+tWm/2));
     mcn = find(rapspcn<tresholdnoise);% set the weigth
@@ -2269,8 +2287,8 @@ mipdm=min(pdef(:,4));
 mapdm=max(pdef(:,4));
 miQcm=min(Qcef(:,4));
 maQcm=max(Qcef(:,4));
-trepd=0.05*(mapdm-mipdm)/2;
-treQc=0.05*(maQcm-miQcm)/2;
+trepd=0.03*mapdm;
+treQc=0.03*maQcm;
 
 Qps=Qcef(:,4);
 pdps=pdef(:,4);
@@ -2432,7 +2450,7 @@ if pa==3
     FName = 'V_model';
     savefig(V_map,fullfile(FPath, FLabel, FName));
     
-    Q_map=figure('Name','Q Model','NumberTitle','off',...
+    Q_map=figure('Name','Velocity Model','NumberTitle','off',...
         'visible',visib);
     
     %Attenuation model
@@ -2482,7 +2500,7 @@ if pa==3
     title('3D checkerboard input',...
         'FontSize',12,'FontWeight','bold','Color','k');
     
-    FName = '3DQ_check_input';
+    FName = '3DQ_check';
     savefig(Qchecki,fullfile(FPath, FLabel, FName));
     
     Qchecko =...
@@ -2510,7 +2528,7 @@ if pa==3
     title('3D checkerboard output',...
         'FontSize',12,'FontWeight','bold','Color','k');
     
-    FName = '3DQ_check_output';
+    FName = '3DQ_check';
     savefig(Qchecko,fullfile(FPath, FLabel, FName));
 end
 
