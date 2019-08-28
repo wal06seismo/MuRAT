@@ -1,7 +1,7 @@
 % PROGRAM FOR: 3D direct- and 2D peak delay and coda-wave (with and without
 % kernels) attenuation tomography
 %
-% Author:  L. De Siena, January 2018 
+% Author:  L. De Siena, July 2019 
 % 
 % Installation
 % ------------
