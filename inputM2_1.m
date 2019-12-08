@@ -1,17 +1,17 @@
 % Hard coded data in .m spreadsheet
 %
-% Sample Workbooks: ./Input_file_MSH.m or Input_file_Romania.m
 
 %EVERYTHING MARKED BY 'E' IS TO/CAN BE EDITED
+
 % Which analysis do you want to perform?
 % Pick delay and Qc without kernels: pa=1
 % Pick delay and Qc with kernels: pa=2
 % Pick delay, kernel-Qc and P/S wave attenuation with the CN method: pa=3
-
 Murat.analysis = 3;%'E'
 pa=Murat.analysis;
 
 % INPUT PATHS AND FORMATS
+
 % Creates folders and paths to store results and figures
 Murat.paths.label = 'MSH';%'E'
 Murat.paths.workingdir = './';%'E'
@@ -27,19 +27,13 @@ Murat.figures.format = 'jpeg';%'E'
 % Figure visibility - pick 'on' or 'off'
 Murat.figures.visibility = 'on';%'E'
 
-%set here the planes you want to inspect - only for pa=3
-if pa==3
-    Murat.figures.sections=[565000 575000; 5115000 5125000;...
-        -2000 -10000];%'E'
-end
-
 
 % INPUT DATA
 % Choose between P- (2) and S- (3) waves for peak delay
 % RULE: First column in time files always contains origin of events
 % RULE: Second column in time files always contains P-wave phase
 % RULE: Third column in time files always contains S-wave phase
-Murat.data.PorS = 2;
+Murat.data.PorS = 2; %E
 
 % Work with 1 vertical (1) or 2 horizontal (2) recordings, or with the
 % three components(3)
@@ -83,19 +77,6 @@ Murat.data.averageVelocity = 0;%'E'
 Murat.data.originTime = [];%'E'
 Murat.data.PTime = 'SAChdr.times.a';%'E'
 Murat.data.STime = [];%'E'
-
-%start time to measure noise - before P-arrival in seconds - for pa=3
-if pa==3
-    % Length of the window used to measure noise and direct wave intensity
-    Murat.data.bodyWindow = 1;%'E'
-
-    % Start of the window used to measure noise
-    Murat.data.startNoise = 5;%'E'
-    
-    % The minimum coda-to-noise energy ratio for the weighted inversion
-    Murat.data.tresholdNoise = 10;%'E'
-
-end
 
 % INPUT GEOMETRY
 % Import event origin time and coords of event and station from files

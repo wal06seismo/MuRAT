@@ -1,7 +1,7 @@
 % PROGRAM FOR: 3D direct- and 2D peak delay and coda-wave (with and without
 % kernels) attenuation tomography
 %
-% Author:  L. De Siena, October 2019 
+% Author:  L. De Siena, December 2019 
 % 
 % Installation
 % ------------
@@ -66,7 +66,7 @@ clc
 inputFile = input(' Input file is a .m (1) or a .xls (2)?');
 
 if inputFile==1 % Import data from .m file
-    inputM
+    inputM2_1
 elseif inputFile==2 % Import data from .xsl spreadsheet
     inputXLS
 end
@@ -561,7 +561,7 @@ for i=1:lls
     if tempi(i,2)==-12345
         continue
     end
-    if isequal(fS,'[]')
+    if ~isequal(fS,'[]')
         tempi(i,3)=eval(fS);
     end
     srate=1/SAChdr.times.delta; %sampling frequency
