@@ -61,6 +61,21 @@ saveas(Pppd,fullfile(FPath, FLabel, FName), fformat);
 mtik0PD=tikhonov(Up,diag(Sp),Vp,dp,tik0_regPD);
 pd(:,4)=mtik0PD;
 
+%Testing - Creating 2D checkerboard matrix
+nxc1=nxc/sizea;
+nyc1=nyc/sizea;
+I = imresize(xor(mod(1:nyc1, 2).', mod(1:nxc1, 2)),...
+    [sizea*nyc1 sizea*nxc1], 'nearest');
+pd(:,5)=I(1:end);
+pd(pd(:,5)==1,5)=latt*100;
+pd(pd(:,5)==0,5)=hatt*100;
+
+pd5= pd(:,5);
+rePD = Apd*pd5;
+mcheckpd=tikhonov(Up,diag(Sp),Vp,rePD,tik0_regPD);
+pd(:,6)=mcheckpd;
+pd(:,7)=Apd(1,:);
+
 %Qc mapping
 %Remove anomalous Qm
 stat=Qm(retainQm);
@@ -73,8 +88,11 @@ if nonlinear==0
     W3=RZZ1<0.7;
     W4=W3+W2+W1;
     Wc=diag(1./(W4+1));% weights
+    
 elseif nonlinear==1
+    
     Wc=1;
+    
 end
 
 dcW=Wc*stat;
@@ -100,21 +118,13 @@ mtik0C=tikhonov(Uc,diag(Sc),Vc,dcW,tik0_regC);
 Qc(:,4)=mtik0C;
 
 %Testing - Creating 2D checkerboard matrix
-nxc1=nxc/sizea;
-nyc1=nyc/sizea;
-I = imresize(xor(mod(1:nyc1, 2).', mod(1:nxc1, 2)),...
-    [sizea*nyc1 sizea*nxc1], 'nearest');
-Qc(:,5)=I(1:end);
-Qc(Qc(:,5)==1,5)=latt;
-Qc(Qc(:,5)==0,5)=hatt;
+Qc(:,5)=pd(:,5);
 
 Qc5= Qc(:,5);
 re = Gc*Qc5;
 mcheckc=tikhonov(Uc,diag(Sc),Vc,re,tik0_regC);
 Qc(:,6)=mcheckc;
 Qc(:,7)=Gc(1,:);
-Qc(:,8)=Gc(2,:);
-
 
 Murat.inversion.Qc=Qc;
 Murat.inversion.peakDelay=pd;

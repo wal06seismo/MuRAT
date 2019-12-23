@@ -299,7 +299,7 @@ With these inputs, the user searches for the Qc minimising the inversion from a 
 *Instructions - the output files*
 ------------
 
-All the output files (.txt) and figures (in the format defined by the user) are stored in the **Murat.paths.label** folder, created in the **Working Directory**. The first three columns of the output files correspond to WE, SN, and depth. The fourth column is the mapped parameter. 
+All the output files (.txt) and figures (in the format defined by the user) are stored in the **Murat.paths.label** folder, created in the **Murat.paths.workingdir**. The first three columns of the output files correspond to WE, SN, and depth. The fourth column is the mapped parameter. 
 
 ------------
 *peakdelay.txt*
@@ -317,42 +317,34 @@ The fifth and sixth columns correspond to the input and output of the checkerboa
 
 ------------
 
-All the figures (in the **Figures Format** defined by the user) are stored in the **Murat.paths.label** folder, created in the **Murat.paths.workingdir**. If the Mapping Toolbox is available and the coordinates are in latitude and longitude, the figures will show coastlines.
+All the figures (in the **Murat.figures.format** defined by the user) are stored in the **Murat.paths.label** folder, created in the **Murat.paths.workingdir**. If the Mapping Toolbox is available and the coordinates are in latitude and longitude, the figures will show coastlines.
 
 ------------
 *Rays.Figures format*
 
-A figure to plot rays either in 2D (Analyses + 1 or 2) or 3D (Analysis = 3) - it will show rays in the reference system of the pre-defined grid with sources and stations used.
+A figure to plot rays either in 2D (corresponding to peak-delay sensitivity) - it will show rays in the reference system of the pre-defined grid with sources and stations used.
 
 ------------
 *Qc_sensitivity.Figures format* - Only available for **Murat.analysis = 2 or 3**
 
 A figure to plot the source-station normalised kernel for the first source-station pair. It will show the sensitivity in the reference system of the pre-defined grid.
 
-------------
-*Spectrogram.Figures format - Optional*
-
-A plot of the first spectrogram in the dataset. The plot can be used to set appropriate frequency, peak delay, and coda inputs.
 
 ------------
 *Qc_Peak_Delay.Figures format*
 
 A figure to evaluate the appropriate peak-delay and coda inputs. The upper panel should show a constant inverse Qc with travel time. The lower panel should show an increasing peak delay with travel time. Red dots correspond to outliers. For Qc, the maximum uncertainty to define outliers is set as **Murat.inversion.fitT**, for the non-linear it is pre-defined. For the peak-delay, we define as outliers all the values over twice the standard deviation from the average.
 
-------------
-*CN_plot.Figures format - Optional*
-
-A figure to evaluate if the direct-energy decrease with travel time follows the assumption of the coda-normalisation method (upper panel). MuRAT2.0 inputs the Qc measurements obtained in previous steps in the equation. This operation removes the effect of coda attenuation variations, improving the fit for the direct wave attenuation. The lower panel shows the effect of a residual geometrical spreading on coda attenuation, with the eventual presence of outliers.
 
 ------------
-*Lc_Qc.Figures format (for **Murat.analysis = 2 or 3**) and Lc_CN.Figures format (for **Murat.analysis = 2 or 3**)*
+*Lc_Qc.Figures format and Lc_Lc_PeakDelay.Figures format *
 
-These are the only plots appearing if **Murat.figures.visibility = 0** during computation. They show the L-curves corresponding to the coda-attenuation and total-attenuation inversion. After they appear, a prompt asks which damping parameter the user wants to pick.
+These are the only plots appearing if **Murat.figures.visibility = 0** during computation. They show the L-curves corresponding to the peak-delay (ray sensitivity) and coda-attenuation inversions. After they appear, a prompt asks which damping parameter the user wants to pick.
 
 ------------
-*Picard_Qc.Figures format
+*Picard_Qc.Figures format and Picard_PeakDelay.Figures format*
 
-These plots show the result of the Picard analysis, necessary to evaluate how many of the inversion parameters are correctively solved in the coda-attenuation and total-attenuation inversions, respectively. The two figures do not appear during computation.
+These plots show the result of the Picard analysis, necessary to evaluate how many of the inversion parameters are correctively solved in the coda-attenuation and peak-delay inversions, respectively. The two figures do not appear during computation.
 
 ------------
 *Peak_delay_map.Figures format* and *Qc_map.Figures format*
@@ -360,14 +352,19 @@ These plots show the result of the Picard analysis, necessary to evaluate how ma
 These plots show the result of the peak-delay and Qc mapping in the grid's reference system.
 
 ------------
-*Qc_checkerboard_input.Figures format* and *Qc_checkerboard_output.Figures format
+*Qc_checkerboard.Figures format* and *PD_checkerboard.Figures format
 
-These plots show the result of the checkerboard test for the Qc mapping in the grid's reference system.
+These plots show the result of the checkerboard tests for the Qc and peak delay mapping in the grid's reference system.
 
 ------------
 *Parameter_space_variations.Figures format*
 
 The plot shows the separation of the scattering and absorption parameters in their parameter space. Grey dots correspond to parameters too near to the average to be interpreted as scattering or absorption variations - the threshold is pre-defined at 5% of the maximum variation of each parameter. Red = High scattering and absorption; Cyan = High scattering and low absorption; Orange = Low scattering and high absorption; Green = Low scattering and absorption.
+
+------------
+*Parameter_map.Figures format*
+
+The plot of the parameters in space.
 
 *Citing MuRAT*
 ------------

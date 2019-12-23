@@ -38,19 +38,23 @@ Qc=Murat.inversion.Qc;
 
 pdel=zeros(length(x),length(y));
 QQc=zeros(length(x),length(y));
+pdchi=zeros(length(x),length(y));
+pdcho=zeros(length(x),length(y));
 QQchi=zeros(length(x),length(y));
 QQcho=zeros(length(x),length(y));
 [X,Y]=meshgrid(x,y);
 index=0;
 for i=1:length(x)
     for j=1:length(y)
+        
         index=index+1;
         pdel(i,j)=pd(index,4);
         QQc(i,j)=Qc(index,4);
-        if pa>1
-            QQchi(i,j)=Qc(index,5);
-            QQcho(i,j)=Qc(index,6);
-        end
+        pdchi(i,j)=pd(index,5);
+        pdcho(i,j)=pd(index,6);
+        QQchi(i,j)=Qc(index,5);
+        QQcho(i,j)=Qc(index,6);
+        
     end
 end
 
@@ -167,7 +171,6 @@ text(mean(l10l),max(log10(peakd)),nameText,'HorizontalAlignment','center',...
 FName = 'Qc_Peak_Delay';
 saveas(Qcpd, fullfile(FPath, FLabel, FName), fformat);
 
-% END PLOTS
 
 pdmap=figure('Name','Peak-delay map','NumberTitle','off',...
     'visible',visib,'Position',[300,200,800,600]);
@@ -206,7 +209,7 @@ view(2)
 colormap(copper)
 
 hcb=colorbar;
-title(hcb,'Inverse Qc','FontSize',14,'FontWeight','bold','Color','k');
+title(hcb,'Qc^{-1}','FontSize',14,'FontWeight','bold','Color','k');
 
 xlabel('WE','FontSize',12,'FontWeight','bold','Color','k')
 ylabel('SN','FontSize',12,'FontWeight','bold','Color','k')
@@ -228,86 +231,138 @@ hold off
 FName = 'Qc_map';
 saveas(Qcmap,fullfile(FPath, FLabel, FName), fformat);
 
-%Parameter analysis
-if pa ==1
-    pdd = pd(:,4)~=0 & Qc(:,4)~=mQm;
-    
-    pdef=pd(pdd,:);
-    Qcef=Qc(pdd,:);
-    pd(:,5)=0;
-    
-elseif pa>=2
-    
-    Qcchecki=figure('Name','Qc checkerboard test input','NumberTitle',...
-        'off','visible',visib,'Position',[300,200,800,600]);
-    contourf(X,Y,QQchi');
-    axis equal
-    view(2)
-    colormap(gray)
-    
-    hcb=colorbar;
-    title(hcb,'Inverse Qc','FontSize',14,'FontWeight','bold','Color','k');
-    
-    xlabel('WE','FontSize',12,'FontWeight','bold','Color','k')
-    ylabel('SN','FontSize',12,'FontWeight','bold','Color','k')
-    title('Qc checherboard input',...
-        'FontSize',12,'FontWeight','bold','Color','k');
-    
+%Checkerboard Peak Delay
+PDcheck=figure('Name','Peak Delay checkerboard test','NumberTitle',...
+    'off','visible',visib,'Position',[300,200,1000,600]);
+subplot(1,2,1)
+contourf(X,Y,pdchi');
+axis equal
+view(2)
+colormap(gray)
+
+hcb=colorbar;
+title(hcb,'log10 peak delay','FontSize',14,'FontWeight','bold','Color','k');
+
+xlabel('WE','FontSize',12,'FontWeight','bold','Color','k')
+ylabel('SN','FontSize',12,'FontWeight','bold','Color','k')
+title('Qc checherboard input',...
+    'FontSize',12,'FontWeight','bold','Color','k');
+
+hold on
+scatter(evestaz(:,1),evestaz(:,2),sz,'c','MarkerEdgeColor',...
+    [1 1 1], 'MarkerFaceColor',[.5 .5 .5], 'LineWidth',1)
+hold on
+scatter(evestaz(:,4),evestaz(:,5),sz,'^','MarkerEdgeColor',...
+    [1 1 1], 'MarkerFaceColor',[.5 .5 .5], 'LineWidth',1)
+if degorutm==111 && hasMT==1
     hold on
-    scatter(evestaz(:,1),evestaz(:,2),sz,'c','MarkerEdgeColor',...
-        [1 1 1], 'MarkerFaceColor',[.5 .5 .5], 'LineWidth',1)
-    hold on
-    scatter(evestaz(:,4),evestaz(:,5),sz,'^','MarkerEdgeColor',...
-        [1 1 1], 'MarkerFaceColor',[.5 .5 .5], 'LineWidth',1)
-    if degorutm==111 && hasMT==1
-        hold on
-        geoshow(coastlat,coastlon);
-        xlim([origin(1) origin(1)+nxc*stepgx]);
-        ylim([origin(2) origin(2)+nyc*stepgy]);
-    end
-    hold off
-    FName = 'Qc_checkerboard_input';
-    saveas(Qcchecki,fullfile(FPath, FLabel, FName), fformat);
-    
-    Qcchecko=figure('Name','Qc checkerboard test output','NumberTitle',...
-        'off','visible',visib,'Position',[300,200,800,600]);
-    contourf(X,Y,QQcho');
-    axis equal
-    view(2)
-    colormap(gray)
-    
-    hcb=colorbar;
-    title(hcb,'Inverse Qc','FontSize',14,'FontWeight','bold','Color','k');
-    
-    xlabel('WE','FontSize',12,'FontWeight','bold','Color','k')
-    ylabel('SN','FontSize',12,'FontWeight','bold','Color','k')
-    title('Qc checherboard output',...
-        'FontSize',12,'FontWeight','bold','Color','k');
-    
-    hold on
-    scatter(evestaz(:,1),evestaz(:,2),sz,'c','MarkerEdgeColor',...
-        [1 1 1], 'MarkerFaceColor',[.5 .5 .5], 'LineWidth',1)
-    hold on
-    scatter(evestaz(:,4),evestaz(:,5),sz,'^','MarkerEdgeColor',...
-        [1 1 1], 'MarkerFaceColor',[.5 .5 .5], 'LineWidth',1)
-    hold off
-    if degorutm==111 && hasMT==1
-        hold on
-        geoshow(coastlat,coastlon);
-        xlim([origin(1) origin(1)+nxc*stepgx]);
-        ylim([origin(2) origin(2)+nyc*stepgy]);
-    end
-    hold off
-    
-    FName = 'Qc_checkerboard_output';
-    saveas(Qcchecko,fullfile(FPath, FLabel, FName), fformat);
-    
-    %Parameter analysis
-    pdd =  abs(pd(:,4))>10^(-10);
-    pdef=pd(pdd,:);
-    Qcef=Qc(pdd,:);
-    
+    geoshow(coastlat,coastlon);
+    xlim([origin(1) origin(1)+nxc*stepgx]);
+    ylim([origin(2) origin(2)+nyc*stepgy]);
 end
+hold off
+
+subplot(1,2,2)
+contourf(X,Y,pdcho');
+axis equal
+view(2)
+colormap(gray)
+
+hcb=colorbar;
+title(hcb,'log10 peak delay','FontSize',14,'FontWeight','bold','Color','k');
+
+xlabel('WE','FontSize',12,'FontWeight','bold','Color','k')
+ylabel('SN','FontSize',12,'FontWeight','bold','Color','k')
+title('Peak Delay checherboard output',...
+    'FontSize',12,'FontWeight','bold','Color','k');
+
+hold on
+scatter(evestaz(:,1),evestaz(:,2),sz,'c','MarkerEdgeColor',...
+    [1 1 1], 'MarkerFaceColor',[.5 .5 .5], 'LineWidth',1)
+hold on
+scatter(evestaz(:,4),evestaz(:,5),sz,'^','MarkerEdgeColor',...
+    [1 1 1], 'MarkerFaceColor',[.5 .5 .5], 'LineWidth',1)
+hold off
+if degorutm==111 && hasMT==1
+    hold on
+    geoshow(coastlat,coastlon);
+    xlim([origin(1) origin(1)+nxc*stepgx]);
+    ylim([origin(2) origin(2)+nyc*stepgy]);
+end
+hold off
+
+FName = 'PD_checkerboard';
+saveas(PDcheck,fullfile(FPath, FLabel, FName), fformat);
+
+%Checkerboard Qc
+Qccheck=figure('Name','Qc checkerboard','NumberTitle',...
+    'off','visible',visib,'Position',[300,200,1000,600]);
+subplot(1,2,1)
+contourf(X,Y,QQchi');
+axis equal
+view(2)
+colormap(gray)
+
+hcb=colorbar;
+title(hcb,'Qc^{-1}','FontSize',14,'FontWeight','bold','Color','k');
+
+xlabel('WE','FontSize',12,'FontWeight','bold','Color','k')
+ylabel('SN','FontSize',12,'FontWeight','bold','Color','k')
+title('Qc checherboard input',...
+    'FontSize',12,'FontWeight','bold','Color','k');
+
+hold on
+scatter(evestaz(:,1),evestaz(:,2),sz,'c','MarkerEdgeColor',...
+    [1 1 1], 'MarkerFaceColor',[.5 .5 .5], 'LineWidth',1)
+hold on
+scatter(evestaz(:,4),evestaz(:,5),sz,'^','MarkerEdgeColor',...
+    [1 1 1], 'MarkerFaceColor',[.5 .5 .5], 'LineWidth',1)
+if degorutm==111 && hasMT==1
+    hold on
+    geoshow(coastlat,coastlon);
+    xlim([origin(1) origin(1)+nxc*stepgx]);
+    ylim([origin(2) origin(2)+nyc*stepgy]);
+end
+hold off
+
+subplot(1,2,2)
+contourf(X,Y,QQcho');
+axis equal
+view(2)
+colormap(gray)
+
+hcb=colorbar;
+title(hcb,'Qc^{-1}','FontSize',14,'FontWeight','bold','Color','k');
+
+xlabel('WE','FontSize',12,'FontWeight','bold','Color','k')
+ylabel('SN','FontSize',12,'FontWeight','bold','Color','k')
+title('Qc checherboard output',...
+    'FontSize',12,'FontWeight','bold','Color','k');
+
+hold on
+scatter(evestaz(:,1),evestaz(:,2),sz,'c','MarkerEdgeColor',...
+    [1 1 1], 'MarkerFaceColor',[.5 .5 .5], 'LineWidth',1)
+hold on
+scatter(evestaz(:,4),evestaz(:,5),sz,'^','MarkerEdgeColor',...
+    [1 1 1], 'MarkerFaceColor',[.5 .5 .5], 'LineWidth',1)
+hold off
+if degorutm==111 && hasMT==1
+    hold on
+    geoshow(coastlat,coastlon);
+    xlim([origin(1) origin(1)+nxc*stepgx]);
+    ylim([origin(2) origin(2)+nyc*stepgy]);
+end
+hold off
+
+FName = 'Qc_checkerboard';
+saveas(Qccheck,fullfile(FPath, FLabel, FName), fformat);
+
+%Parameter analysis
+pdd =  abs(pd(:,4))>10^(-10);
+pdef=pd(pdd,:);
+Qcef=Qc(pdd,:);
+
+
 
 pdef(:,4)=pdef(:,4)-mean(pdef(:,4));
 Qcef(:,4)=Qcef(:,4)-mean(Qcef(:,4));
