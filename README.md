@@ -127,7 +127,8 @@ This input is the P-wave time of the event; this parameter is compulsory. The be
 ------------
 **Murat.paths.STime**
 
-This input is the S-wave time of the event. The best practice is to save it in the SAC file as *t0* variable -> *SAChdr.time.t0*. If this is unavailable set it as *Default -> \[]*
+This input is the S-wave time of the event. The best practice is to save it in the SAC file as *t0* variable -> *SAChdr.time.t0*. If this is unavailable set it as *Default -> []*
+
 ------------
 **Murat.figures.format**
 
@@ -154,6 +155,7 @@ MuRAT works with one vertical (1) or two horizontal (2) recordings, or with the 
 *Default -> 8*
 
 Parameter used to smooth envelopes - it will be the parameter divided by the central frequency
+
 ------------
 **Murat.data.maximumPD**
 
@@ -211,17 +213,10 @@ Also used to compute Vp/Vs
 The name of the file containing the 3D velocity model. Only available for **Murat.geometry.availableVelocity=3** - *Default -> []*
 
 ------------
-**Length Window for Body Wave and Noise**
-
-This input is the window length that the user sets to compute the energy for P or S waves and noise. Only available for **Analysis=3**
+GEOMETRY
 
 ------------
-**Start Window Noise**
-
-This input sets the seconds before P-wave arrival where the window to compute noise starts. Only available for **Analysis=3**
-
-------------
-**Import Option for Events and Stations**
+**Murat.geometry.import**
 
 *Available indexes: 1 or 2 - Default -> 2*
 
@@ -232,118 +227,97 @@ It is necessary to define source and station locations for mapping: the user can
 *Station*: Name of station - *SAChdr.station.kstnm*; Station latitude - *SAChdr.station.stla*; Station longitude- *SAChdr.station.stlo*; Station elevation - *SAChdr.station.stel*
 
 -------------
-**Origin of the Grid**
+**Murat.geometry.origin**
 
-The origin of the 2D or 3D grid for imaging is either in UTM or lat/long with depths in meters or kilometers.
-
--------------
-**Name Events File**
-
-The Name of the file containing events' coordinates, for Import Option = 1. The format is:
-
-*even.txt*: Column (1) = twelve numbers for the origin time of the event (date+time in seconds); Column (2) = UTM (WE) or latitude; Column (3) = UTM (SN) or longitude; Column (4) = Depth in meters or km
+The origin point of the 2D grid for imaging is either in UTM or lat/long with depths in meters or kilometers.
 
 -------------
-**Name Stations File**
+**Murat.geometry.end**
 
-Name of the file containing stations' coordinates, for Import Option = 1. The format is:
-
-*staz.txt*: Column (1) = Max four characters; Column (2) = UTM (WE) or latitude; Column (3) = UTM (SN) or longitude; Column (4) = Depth in meters or km
+The end point of the 2D grid for imaging is either in UTM or lat/long with depths in meters or kilometers.
 
 -------------
-**Number of X Nodes**, **Number of Y Nodes** and **Grid Step**
+**Murat.geometry.gridX** and **Murat.geometry.gridY**
 
-The number of X and Y layers, and the step of the mapping grid. Must be defined by the user to include all events' and stations' locations.
-
--------------
-**Meters or Degrees**
-
-Can be set to either 1 (meters) or 111 (meters in degrees).
+The number of layers desired in the X and Y directions.
 
 -------------
-**Set 1 to Create Rays** - DEPRECATED
+**Murat.geometry.degreesorutm** and **Murat.geometry.unity**
 
-Can be set to either 0 (does not create) or 1 (creates) to build a unique variable containing all rays in 3D. The variable will become BIG for extensive tomographic datasets but can be useful as input for other programs.
+Can be set to either 1 (km) or 111 (degrees). The second is used to met meters or km. (1000 or 1)
 
--------------
-**Depth Synthetic Model Layer**
-
-This input sets the depth (negative) to create a two-layer synthetic test. Only available for Analysis=3.
+------------
+INVERSION
 
 -------------
-**Dimension V**
-
-*Available indexes: 1 or 3*
-
-This input sets the dimension of the velocity model. In the case no 3D model is available, MuRAT uses *iasp91*. Only available for **Analysis=3**.
-
--------------
-**Name Velocity Model**
-
-The name of the file containing the 3D velocity model. Only available for **Analysis=3**.
-
--------------
-**Size Checkerboard Anomalies**
+**Murat.inversion.sizeCheck**
 
 *Available indexes: 2 or 4*
 
 This input sets the dimension of the checkerboard anomalies to either twice or four times the step of the imaging grid.
 
 -------------
-**Highs Checkerboard Anomalies** and **Lows Checkerboard Anomalies**
+**Murat.inversion.sizeCheck**
+
+*Available indexes: 2 or 4*
+
+This input sets the dimension of the checkerboard anomalies to either twice or four times the step of the imaging grid.
+
+-------------
+**Murat.inversion.highCheck** and **Murat.inversion.lowCheck**
 
 This input sets the high-attenuation and low-attenuation values (as inverse Q and inverse Qc) for the checkerboard tests.
 
 -------------
-**Linear or Nonlinear**
+**Murat.inversion.nonlinear**
 
 *Available indexes: 0 or 1 - Default -> 0*
 
 With this input, the user decides to inverts coda attenuation with either a linearised (0) or non-linear (1) approach.
 
 -------------
-**Threshold Linear Fit**
+**Murat.inversion.fitT**
 
-The maximum inverse-Qc uncertainty used to weight the coda attenuation data. To be set to an appropriate parameter for the linearised inversion.
+*In the linear case*
+The minimum accepted inverse-Qc uncertainty used to weight the coda attenuation data.
+
+*In the non-linear case*
+The number of smaller time windows in which we divide the coda window - to be set together with next entry.
 
 -------------
-**Length Nonlinear Fit Window** and **Number Nonlinear Fit Window**
+**Murat.inversion.fitL**
 
-These inputs correspond to the length and the number of windows used to compute coda energies for the inversion, respectively. E.g., for a total coda window of 15 seconds, the user can set either three windows of 5 seconds each or five windows of 3 seconds each. To be set to appropriate parameters for the non-linear inversion.
+These inputs correspond to the length of the smaller windows in which we divide the coda window.
+
+Example: for a total coda window of 15 seconds, the user can set either Murat.inversion.fitT=3 windows of Murat.inversion.fitL=5 seconds each or Murat.inversion.fitT=5 windows of Murat.inversion.fitL=3 seconds each. Only active for the non-linear inversion.
 
 -------------
-**Minimum Nonlinear Inverse Qc**, **Maximum Nonlinear Inverse Qc**, and **Total Nonlinear Inverse Qc**
+**Murat.inversion.minimum**, **Murat.inversion.maximum**, and **Murat.inversion.total**
 
 With these inputs, the user searches for the Qc minimising the inversion from a minimum inverse Q (e.g. 0) to a maximum inverse Qc (e.g. 0.01). The total number of Qc are equally-spaced and defined between minimum and maximum. To be set to appropriate parameters for the non-linear inversion.
 
 *Instructions - the output files*
 ------------
 
-All the output files (.txt) and figures (in the format defined by the user) are stored in the **Label** folder, created in the **Working Directory**. The first three columns of the output files correspond to WE, SN, and depth. The fourth column is the mapped parameter. 
+All the output files (.txt) and figures (in the format defined by the user) are stored in the **Murat.paths.label** folder, created in the **Working Directory**. The first three columns of the output files correspond to WE, SN, and depth. The fourth column is the mapped parameter. 
 
 ------------
 *peakdelay.txt*
 
-The variations of Log10 Peak delay from the average - the parameter used to map scattering attenuation. The depth is set to -1000 m. Only four columns as the parameters are just regionalised, not inverted.
+The variations of Log10 Peak delay from the average - the parameter used to map scattering attenuation. The depth is set to -1000 m.
+
+The fifth and sixth columns correspond to the input and output of the checkerboard test, respectively. The seventh column is the first ray.
 
 ------------
 *Qc.txt*
 
 Variations of inverse Qc, alias coda attenuation - the parameter used to map absorption. The depth is set to -1000 m.
     
-**Analysis = 1**: Only four columns as the parameters are just regionalised, not inverted.
-
-**Analyses = 2 or 3**: The fifth and sixth columns correspond to the input and output of the checkerboard test, respectively. The seventh and eight columns are the first two 2D kernels.
+The fifth and sixth columns correspond to the input and output of the checkerboard test, respectively. The seventh column is the first 2D kernel.
 
 ------------
-*Q3D.txt* - Only for **Analysis = 3**
 
-Variations of inverse Q used to map total attenuation. The fifth and sixth columns correspond to the input and output of the 3D checkerboard test, respectively. The seventh column provides the values of the resolution matrix. The eighth column is the result of a synthetic test using the actual result as input - this is improper, but used in some studies. The ninth and tenth columns are the input and output of the two-layer synthetic test, where the interface is at **Depth Synthetic Model Layer**. 
-
-*Instructions - the output figures*
-------------
-
-All the figures (in the **Figures Format** defined by the user) are stored in the **Label** folder, created in the **Working Directory**. If the Mapping Toolbox is available and the coordinates are in latitude and longitude, the figures will show coastlines.
+All the figures (in the **Figures Format** defined by the user) are stored in the **Murat.paths.label** folder, created in the **Murat.paths.workingdir**. If the Mapping Toolbox is available and the coordinates are in latitude and longitude, the figures will show coastlines.
 
 ------------
 *Rays.Figures format*
@@ -351,7 +325,7 @@ All the figures (in the **Figures Format** defined by the user) are stored in th
 A figure to plot rays either in 2D (Analyses + 1 or 2) or 3D (Analysis = 3) - it will show rays in the reference system of the pre-defined grid with sources and stations used.
 
 ------------
-*Qc_sensitivity.Figures format* - Only available for **Analyses = 2 or 3**
+*Qc_sensitivity.Figures format* - Only available for **Murat.analysis = 2 or 3**
 
 A figure to plot the source-station normalised kernel for the first source-station pair. It will show the sensitivity in the reference system of the pre-defined grid.
 
@@ -363,7 +337,7 @@ A plot of the first spectrogram in the dataset. The plot can be used to set appr
 ------------
 *Qc_Peak_Delay.Figures format*
 
-A figure to evaluate the appropriate peak-delay and coda inputs. The upper panel should show a constant inverse Qc with travel time. The lower panel should show an increasing peak delay with travel time. Red dots correspond to outliers. For Qc, the maximum uncertainty to define outliers is set as **Threshold Linear Fit**, for the non-linear it is pre-defined. For the peak-delay, we define as outliers all the values over twice the standard deviation from the average.
+A figure to evaluate the appropriate peak-delay and coda inputs. The upper panel should show a constant inverse Qc with travel time. The lower panel should show an increasing peak delay with travel time. Red dots correspond to outliers. For Qc, the maximum uncertainty to define outliers is set as **Murat.inversion.fitT**, for the non-linear it is pre-defined. For the peak-delay, we define as outliers all the values over twice the standard deviation from the average.
 
 ------------
 *CN_plot.Figures format - Optional*
@@ -371,12 +345,12 @@ A figure to evaluate the appropriate peak-delay and coda inputs. The upper panel
 A figure to evaluate if the direct-energy decrease with travel time follows the assumption of the coda-normalisation method (upper panel). MuRAT2.0 inputs the Qc measurements obtained in previous steps in the equation. This operation removes the effect of coda attenuation variations, improving the fit for the direct wave attenuation. The lower panel shows the effect of a residual geometrical spreading on coda attenuation, with the eventual presence of outliers.
 
 ------------
-*Lc_Qc.Figures format (for **Analyses = 2 or 3**) and Lc_CN.Figures format (for **Analyses = 2 or 3**)*
+*Lc_Qc.Figures format (for **Murat.analysis = 2 or 3**) and Lc_CN.Figures format (for **Murat.analysis = 2 or 3**)*
 
-These are the only plots appearing if **Figures Visibility = 0** during computation. They show the L-curves corresponding to the coda-attenuation and total-attenuation inversion. After they appear, a prompt asks which damping parameter the user wants to pick.
+These are the only plots appearing if **Murat.figures.visibility = 0** during computation. They show the L-curves corresponding to the coda-attenuation and total-attenuation inversion. After they appear, a prompt asks which damping parameter the user wants to pick.
 
 ------------
-*Picard_Qc..Figures format (for **Analyses = 2 or 3**) and Picard_CN.Figures format (for **Analysis = 3**)*
+*Picard_Qc.Figures format
 
 These plots show the result of the Picard analysis, necessary to evaluate how many of the inversion parameters are correctively solved in the coda-attenuation and total-attenuation inversions, respectively. The two figures do not appear during computation.
 
@@ -386,7 +360,7 @@ These plots show the result of the Picard analysis, necessary to evaluate how ma
 These plots show the result of the peak-delay and Qc mapping in the grid's reference system.
 
 ------------
-*Qc_checkerboard_input.Figures format* and *Qc_checkerboard_output.Figures format - Only for **Analyses = 2 or 3***
+*Qc_checkerboard_input.Figures format* and *Qc_checkerboard_output.Figures format
 
 These plots show the result of the checkerboard test for the Qc mapping in the grid's reference system.
 
@@ -394,11 +368,6 @@ These plots show the result of the checkerboard test for the Qc mapping in the g
 *Parameter_space_variations.Figures format*
 
 The plot shows the separation of the scattering and absorption parameters in their parameter space. Grey dots correspond to parameters too near to the average to be interpreted as scattering or absorption variations - the threshold is pre-defined at 5% of the maximum variation of each parameter. Red = High scattering and absorption; Cyan = High scattering and low absorption; Orange = Low scattering and high absorption; Green = Low scattering and absorption.
-
-------------
-*Q_model.fig; V_model.fig; 3DQ_check_input.fig; 3DQ_check_output.fig - Only for **Analysis = 3***
-
-The 3D velocity model, the total attenuation model, and the checkerboard test input and output are available as 3D figures in Matlab format. They can be loaded in Matlab and will show the vertical and horizontal slices defined in **Figures Sections**.
 
 *Citing MuRAT*
 ------------
