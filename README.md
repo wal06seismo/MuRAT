@@ -337,9 +337,9 @@ A figure to evaluate the appropriate peak-delay and coda inputs. The upper panel
 
 
 ------------
-*Lc_Qc.Figures format and Lc_Lc_PeakDelay.Figures format*
+*Lc_Qc.Figures format and Lc_PeakDelay.Figures format*
 
-These are the only plots appearing if **Murat.figures.visibility = 0** during computation. They show the L-curves corresponding to the peak-delay (ray sensitivity) and coda-attenuation inversions. After they appear, a prompt asks which damping parameter the user wants to pick.
+These are the only plots appearing if **Murat.figures.visibility = 0** during computation. They show the L-curves corresponding to the coda-attenuation and peak-delay (ray sensitivity) inversions. After they appear, a prompt asks which damping parameter the user wants to pick.
 
 ------------
 *Picard_Qc.Figures format and Picard_PeakDelay.Figures format*
