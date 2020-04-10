@@ -13,7 +13,7 @@ Murat.analysis = 2;%'E'
 %Treshold to reduce computational time for Pacheco-Snieder kernels.
 %It divides the inversion grid by the treshold.
 if Murat.analysis == 3
-    Murat.geometry.kernelTreshold=10;%'E'
+    Murat.geometry.kernelTreshold=5;%'E'
 end
 
 % INPUT DATA

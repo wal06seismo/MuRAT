@@ -1,5 +1,5 @@
 %%  2D peak-delay and Qc TOMOGRAPHIC INVERSIONS
-function Murat=Murat_inversion(Murat)
+function Murat=Murat_inversion_nopd(Murat)
 %PATHS and FIGURES
 FPath=Murat.paths.workingdir;
 FLabel=Murat.paths.label;
@@ -29,7 +29,7 @@ pd=XY(:,1:2);
 pd(:,3)=-1000;
 Qc=pd;
 
-%Peak delay mapping - weighted average
+%Peak delay mapping
 lpdelta_o=lpdelta(outlierspd==0);
 Apd=Apd(outlierspd==0,:);
 %Apd(Apd~=0)=1;
@@ -37,16 +37,16 @@ lApd=size(Apd);
 Apd1=Apd;
 mpd=zeros(lApd(2),1);
 
-for j=1:lApd(2)
-        Apd1(:,j)=Apd(:,j).*lpdelta_o;
+for i=1:lApd(1)
+    Apd1(i,:)=Apd(i,:)/sum(Apd(i,:))*lpdelta_o(i);
 end
 
 for j=1:lApd(2)
-    if sum(Apd1(:,j))~=0
-        mpd(j,1)=sum(Apd1(:,j))/sum(Apd(:,j));
+    if isempty(find(Apd1(:,j)~=0,1))==0
+        mpd(j,1)=mean(Apd1(Apd1(:,j)~=0,j));
     end
 end
-
+    
 pd(:,4)=mpd;
 
 %Qc mapping

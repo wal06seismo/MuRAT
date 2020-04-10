@@ -24,13 +24,13 @@
 % Unzip the MSH (Mount St. Helens) and Romania datasets and put
 % the folders in the Murat-master folder.
 %
-% 3. Build your own input file (.xsl) - each field is described in the
-% attached README file and in the INPUT sections of thi code.
+% 3. Build your own input file (.m) - each field is described in the
+% attached README file and in the INPUT sections of the code.
 % When building your example, use one of the Input
 % files as template (MSH for 3D and Romania for 2D). Always start with an
 % analytic 2D analysis (“pa=2”).
 %
-% 4. Run MuRAT2.m.
+% 4. Run MuRAT2_2.m.
 %
 % 5. Select the name of the input file desired
 % (Input_MSH.m, Input_Romania.m, Input_Pollino and Input_OlDoinyo).
@@ -48,7 +48,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% INPUTS AND CHECKS
 
-unzip('Utilities_Matlab.zip','Utilities_Matlab')
 addpath('./Utilities_Matlab')
 
 clear

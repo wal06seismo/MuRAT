@@ -35,6 +35,7 @@ end
 xx=XY(:,1);
 yy=XY(:,2);
 lxy=length(xx);
+x1=Murat.geometry.x;
 
 % INVERSION
 nonlinear=Murat.inversion.nonlinear;
@@ -245,7 +246,17 @@ for i=1:lls %loop through source-station pairs
     maax=max(sst(1),sst(4));
     miiy=min(sst(2),sst(5));
     maay=max(sst(2),sst(5));
-    fxy=find(xx>miix & xx<maax & yy>miiy & yy<maay);
+    if abs(maax-miix)>abs(x1(2)-x1(1)) && abs(maay-miiy)>abs(yy(2)-yy(1))
+        fxy=find(xx>miix & xx<maax & yy>miiy & yy<maay);
+    elseif abs(maax-miix)>abs(x1(2)-x1(1)) && abs(maay-miiy)<abs(yy(2)-yy(1))
+        fxy=find(xx>miix & xx<maax & yy>miiy & maay<yy);
+    elseif abs(maax-miix)<abs(x1(2)-x1(1)) && abs(maay-miiy)>abs(yy(2)-yy(1))
+        fxy=find(xx>miix & maax<xx & yy>miiy & yy<maay);
+    else
+        fxy=find(xx>miix & maax<xx & yy>miiy & maay<yy);
+    end
+        
+        
     lfxy=length(fxy);
     xd=linspace(miix,maax,lfxy);
     yd=linspace(miiy,maay,lfxy);

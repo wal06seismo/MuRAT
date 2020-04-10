@@ -88,11 +88,6 @@ Murat.data.averageVelocityS = 4;%'E'
 
 %name of the velocity model - if options (1) or (2) 
 namev=[];%'E'
-
-% set createrays to 1 if you want to create files for rays,
-% if options (1) or (2)
-% WARNING: This will create A BIG .mat file
-Murat.geometry.createrays = 0;%'E'
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% GEOMETRY
@@ -148,24 +143,21 @@ if Murat.inversion.nonlinear==0
 elseif Murat.inversion.nonlinear==1
     % Length of smaller time windows to compute compute coda intensity
     Murat.inversion.fitL = 2;%'E'
-    Murat.inversion.fitT = 5;%'E'
     % Number of time windows to compute coda intensity
+    Murat.inversion.fitT = 5;%'E'
     Murat.inversion.fitN=Murat.data.codaWindow/Murat.inversion.fitL;
     %Grid search - set the minimum, maximum and spacing to search in the
     %parameter space
-    m1min = 0;%'E'
-    Murat.inversion.minimum=m1min; % minimum inverse Qc allowed
-    m1max = 0.01;%'E'
-    Murat.inversion.maximum=m1max;% minimum inverse Qc allowed
-    total = 1001;%'E'
-    Murat.inversion.total = total;% total number of Qc in the interval
+    Murat.inversion.minimum=0; %E
+    Murat.inversion.maximum=0.01;% minimum inverse Qc allowed
+    Murat.inversion.total = 1001;%'E'
     Murat.inversion.fit = (m1min + (m1max-m1min)/(total-1)*(0:total-1))';
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% CHECKS AND LOOPS - DO NOT EDIT
 
-if Murat.geometry.import == 1
+if Murat.geometry.import == 1 %DEPRECATED
     
     %Name of the event file if importing from file
     namee='even.txt';%'E'
