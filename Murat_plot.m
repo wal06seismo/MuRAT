@@ -1,55 +1,57 @@
 %%  Creates maps
-function Murat=Murat_plot_nopd(Murat)
-hasMT=Murat.figures.hasMT;
+function Murat=Murat_plot(Murat)
 
-pa=Murat.analysis;
+hasMT                   =   Murat.figures.hasMT;
+
+pa                      =   Murat.analysis;
 
 %PATHS and FIGURES
-FPath=Murat.paths.workingdir;
-FLabel=Murat.paths.label;
-visib=Murat.figures.visibility;
-sz=Murat.figures.sizeMarker;
-fformat=Murat.figures.format;
+FPath                   =   Murat.paths.workingdir;
+FLabel                  =   Murat.paths.label;
+visib                   =   Murat.figures.visibility;
+sz                      =   Murat.figures.sizeMarker;
+fformat                 =   Murat.figures.format;
 
 %DATA
-lls=length(Murat.paths.listasac);
-Qm=Murat.data.measuredQc;
-outlierspd=Murat.data.outliersPeakDelay;
-time0=Murat.data.theoreticalTravelTime;
-mQm=Murat.data.averageQc;
-retainQm=Murat.data.retainQm;
-l10l=Murat.data.logTravelPD;
-fitrobust=Murat.data.fitrobust;
-peakd=Murat.data.peakd;
+lls                     =   length(Murat.paths.listasac);
+Qm                      =   Murat.data.measuredQc;
+outlierspd              =   Murat.data.outliersPeakDelay;
+time0                   =   Murat.data.theoreticalTravelTime;
+mQm                     =   Murat.data.averageQc;
+retainQm                =   Murat.data.retainQm;
+l10l                    =   Murat.data.logTravelPD;
+fitrobust               =   Murat.data.fitrobust;
+peakd                   =   Murat.data.peakd;
 
 %GEOMETRY
-origin=Murat.geometry.origin;
-stepgx=Murat.geometry.gridStepX;
-stepgy=Murat.geometry.gridStepY;
-nxc=Murat.geometry.gridX;
-nyc=Murat.geometry.gridY;
-x=Murat.geometry.x;
-y=Murat.geometry.y;
-degorutm=Murat.geometry.degreesorutm;
-evestaz=Murat.geometry.evestaz;
-Ac=Murat.inversion.AQCoda;
-pd=Murat.inversion.peakDelay;
-Qc=Murat.inversion.Qc;
+origin                  =   Murat.geometry.origin;
+stepgx                  =   Murat.geometry.gridStepX;
+stepgy                  =   Murat.geometry.gridStepY;
+nxc                     =   Murat.geometry.gridX;
+nyc                     =   Murat.geometry.gridY;
+x                       =   Murat.geometry.x;
+y                       =   Murat.geometry.y;
+degorutm                =   Murat.geometry.degreesorutm;
+evestaz                 =   Murat.geometry.evestaz;
+Ac                      =   Murat.inversion.AQCoda;
+pd                      =   Murat.inversion.peakDelay;
+Qc                      =   Murat.inversion.Qc;
 
-pdel=zeros(length(x),length(y));
-QQc=zeros(length(x),length(y));
-QQchi=zeros(length(x),length(y));
-QQcho=zeros(length(x),length(y));
-[X,Y]=meshgrid(x,y);
-index=0;
-for i=1:length(x)
-    for j=1:length(y)
+pdel                    =   zeros(length(x),length(y));
+QQc                     =   zeros(length(x),length(y));
+QQchi                   =   zeros(length(x),length(y));
+QQcho                   =   zeros(length(x),length(y));
+[X,Y]                   =   meshgrid(x,y);
+
+index                   =   0;
+for i = 1:length(x)
+    for j = 1:length(y)
         
-        index=index+1;
-        pdel(i,j)=pd(index,4);
-        QQc(i,j)=Qc(index,4);
-        QQchi(i,j)=Qc(index,5);
-        QQcho(i,j)=Qc(index,6);
+        index           =   index+1;
+        pdel(i,j)       =   pd(index,4);
+        QQc(i,j)        =   Qc(index,4);
+        QQchi(i,j)      =   Qc(index,5);
+        QQcho(i,j)      =   Qc(index,6);
         
     end
 end

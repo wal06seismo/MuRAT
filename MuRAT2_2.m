@@ -46,34 +46,43 @@
 % Kernel-based 2D coda attenuation: Del Pezzo et al. 2016 (GJI);
 % De Siena et al. 2017 (GRL); Napolitano et al. 2019 (Geos. Fron.)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% INPUTS AND CHECKS
+%% INPUTS
 
 addpath('./Utilities_Matlab')
 
-clear
-close all
-clc
+clear; close all; clc
 
-[file,path] = uigetfile('*.m');
+[file,path]                         =   uigetfile('*.m');
+
 if isequal(file,0)
    disp('User selected Cancel');
 else
    disp(['User selected ', fullfile(path,file)]);
 end
+
 run(fullfile(path, file))
+%% CHECKS
+
+disp('Checks and Loops')
+
+Murat                               =   Murat_checks(Murat);
+
 %% Seismic attributes for peak delay and Qc imaging
+
 disp('Data Section')
 
-Murat=Murat_data(Murat);
+Murat                               =   Murat_data(Murat);
 
 %%  2D peak-delay and Qc TOMOGRAPHIC INVERSIONS
+
 disp('Inversion Section')
 
-Murat=Murat_inversion(Murat);
+Murat                               =   Murat_inversion(Murat);
 
 %% Creating maps
+
 disp('Plot Section')
 
-Murat=Murat_plot(Murat);
+Murat                               =   Murat_plot(Murat);
 
 save('Murat.mat','Murat');
